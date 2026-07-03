@@ -34,24 +34,20 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		timer++;
 		//if (timer % 300 == 1)speed = 50+GetRand(125);
 		drawSpeed = 200 - speed;	// 200からスピード値を引いた時間で画像が一周する
-		if		(timer % drawSpeed > (drawSpeed / 10) * 9)playerDrawImg = img10Right;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 8)playerDrawImg = img07Right;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 7)playerDrawImg = img04Right;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 6)playerDrawImg = img04Left;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 5)playerDrawImg = img07Left;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 4)playerDrawImg = img10Left;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 3)playerDrawImg = img07Left;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 2)playerDrawImg = img04Left;
-		else if (timer % drawSpeed > (drawSpeed / 10) * 1)playerDrawImg = img04Right;
-		else if (timer % drawSpeed > 0)playerDrawImg = img07Right;
-		run-=speed/50;
-		DrawImage(playerDrawImg, WIDTH / 2-(500-run)/10, HEIGHT / 2,8);	// 元の画像が小さいので8倍で出力
-		DrawImage(imgRunningMachine, WIDTH / 2, (HEIGHT / 2)+35,8);
+		if		(timer % drawSpeed > (drawSpeed / 6) * 5)playerDrawImg = img04Right;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 4)playerDrawImg = img07Right;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 3)playerDrawImg = img10Right;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 2)playerDrawImg = img04Left;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 1)playerDrawImg = img07Left;
+		else if (timer % drawSpeed > 0)					 playerDrawImg = img10Left;
+		run--;
+		DrawImage(playerDrawImg, WIDTH / 2/* - (500 - run) / 10*/, HEIGHT / 2, 8);	// 元の画像が小さいので8倍で出力
+		DrawImage(imgRunningMachine, WIDTH / 2, (HEIGHT / 2)+45,8);
 
-		if (timer % drawSpeed > (drawSpeed/9) * 8 && pushS == 1)run += speed/2;
+		if (timer % drawSpeed > (drawSpeed/9) * 8 && pushS == 1)run += drawSpeed*2;
 		//if (timer % drawSpeed < (drawSpeed/10) * 1 && pushS == 1)run += drawSpeed * 2;
 
-		if (timer%drawSpeed<(drawSpeed/10)*8&&timer % drawSpeed > (drawSpeed/10) * 1 && pushS == 1)run -= drawSpeed * 3;
+		if (timer%drawSpeed<(drawSpeed/10)*8&&timer % drawSpeed > (drawSpeed/10) * 1 && pushS == 1)run -= drawSpeed * 2;
 
 		if(CheckHitKey(KEY_INPUT_S) == 0)
 		{
@@ -74,13 +70,13 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 void InitGame(void)
 {
 	// プレイヤーの画像読み込み
-	img10Right = LoadGraphWithCheck("image/Run1rightPlayer.png");
-	img07Right = LoadGraphWithCheck("image/Run0.7rightPlayer.png");
-	img04Right = LoadGraphWithCheck("image/Run0.4rightPlayer.png");
-	img10Left = LoadGraphWithCheck("image/Run1leftPlayer.png");
-	img07Left = LoadGraphWithCheck("image/Run0.7leftPlayer.png");
-	img04Left = LoadGraphWithCheck("image/Run0.4leftPlayer.png");
-	imgStop = LoadGraphWithCheck("image/Run0StopPlayer.png");
+	img10Right = LoadGraphWithCheck("image/run1.0Right.png");
+	img07Right = LoadGraphWithCheck("image/run0.7Right.png");
+	img04Right = LoadGraphWithCheck("image/run0.4Right.png");
+	img10Left = LoadGraphWithCheck("image/run1.0Left.png");
+	img07Left = LoadGraphWithCheck("image/run0.7Left.png");
+	img04Left = LoadGraphWithCheck("image/run0.4Left.png");
+	imgStop = LoadGraphWithCheck("image/runStop.png");
 
 	// ランニングマシンの画像読み込み
 	imgRunningMachine = LoadGraphWithCheck("image/RunningMachineRed.png");
