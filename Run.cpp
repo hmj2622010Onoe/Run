@@ -59,13 +59,14 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			DrawImage(imgStarN, WIDTH/2, HEIGHT/2, 8);	// 星
 			SetBackgroundColor(0, 10, 180);	// 背景色の指定
 		}
+		DrawImage(sunMoon, 200, 120, 5);	// 昼なら太陽、夜なら月を表示する
+		if(sun==false)SetDrawBright(150, 150, 150);
 		pyramidX = (pyramidX - speed / 15);	//ピラミッド
 		DrawExtendGraph(800+pyramidX/100, 200, 1300 + pyramidX/100, 450, pyramid, true);
 		DrawImage(ground, WIDTH / 2, (HEIGHT / 2)+250,8);	// 地面
 		sandX = (sandX - speed/50) % WIDTH;	// 砂の部分
 		DrawExtendGraph(sandX, 450,WIDTH+sandX,500,sand,true);
 		DrawExtendGraph(WIDTH+sandX,450,WIDTH*2+sandX,500,sand,true);
-		DrawImage(sunMoon, 200, 120, 5);	// 昼なら太陽、夜なら月を表示する
 		timer++;
 		drawSpeed = 200 - speed;	// 200からスピード値を引いた時間で画像が一周する
 		if		(timer % drawSpeed > (drawSpeed / 6) * 5)playerDrawImg = img04Right;
@@ -75,7 +76,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		else if (timer % drawSpeed > (drawSpeed / 6) * 1)playerDrawImg = img07Left;
 		else if (timer % drawSpeed > 0)					 playerDrawImg = img10Left;
 		if (timer % drawSpeed == 0)count++;	// プレイヤーの動き毎にカウント
-		if (count == 8)	// 8周すると昼と夜を切り替える
+		if (count == 8)	// 【仮】8周すると昼と夜を切り替える
 		{
 			if (rhythm == 2)rhythm = 3, speed = 150,sun=false;
 			else rhythm = 2, speed=150,sun=true;
@@ -91,7 +92,10 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (timer % drawSpeed == ((drawSpeed / 6) * 3.5))PlaySoundMem(seMetronome, DX_PLAYTYPE_BACK);
 		}
 		run--;
+
+		if (sun == false)SetDrawBright(100, 100, 100);
 		DrawImage(playerDrawImg, WIDTH / 2 - (500 - run) / 10, HEIGHT / 2, 8);	// 元の画像が小さいので8倍で出力
+		SetDrawBright(255, 255, 255);
 		//DrawImage(imgRunningMachine, WIDTH / 2, (HEIGHT / 2) + 45, 8);
 
 		if (timer % drawSpeed > (drawSpeed/6) * 5 && pushS == 1)run += drawSpeed*2;
