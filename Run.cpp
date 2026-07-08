@@ -6,8 +6,10 @@ const int WIDTH = 1200, HEIGHT = 720;	// ウィンドウの幅と高さのピクセル数
 const int FPS = 60;
 
 // グローバル変数
-int img10Right,img07Right,img04Right, img10Left,img07Left,img04Left,imgStop,img10Segway,img05Segway;	// プレイヤーの画像
-int imgRunningMachine;	// ランニングマシンの画像
+int img10Right,img07Right,img04Right, img10Left,img07Left,img04Left,imgMissLeft,imgR10Right,imgR07Right,imgR04Right,imgStop,img10Segway,img05Segway;	// プレイヤーの画像
+
+int imgPharaoh, imgPharaohMiss;	// ファラオ(追いかけてくる敵)の画像
+
 int imgGround, imgSand, imgPyramid,imgSun,imgMoon;	// 背景の画像
 int imgGroundN, imgSandN, imgPyramidN,imgStarN;	// 背景(夜)の画像
 
@@ -28,6 +30,8 @@ int run = 500;
 int count = 0;
 
 bool sun = true;
+bool dush = true;
+bool pharaohUp = true;
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -69,13 +73,16 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		DrawExtendGraph(WIDTH+sandX,450,WIDTH*2+sandX,500,sand,true);
 		timer++;
 		drawSpeed = 200 - speed;	// 200からスピード値を引いた時間で画像が一周する
-		if		(timer % drawSpeed > (drawSpeed / 6) * 5)playerDrawImg = img04Right;
-		else if (timer % drawSpeed > (drawSpeed / 6) * 4)playerDrawImg = img07Right;
-		else if (timer % drawSpeed > (drawSpeed / 6) * 3)playerDrawImg = img10Right;
+		if		(timer % drawSpeed > (drawSpeed / 6) * 5)playerDrawImg = imgR04Right;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 4)playerDrawImg = imgR07Right;
+		else if (timer % drawSpeed > (drawSpeed / 6) * 3)playerDrawImg = imgR10Right;
 		else if (timer % drawSpeed > (drawSpeed / 6) * 2)playerDrawImg = img04Left;
 		else if (timer % drawSpeed > (drawSpeed / 6) * 1)playerDrawImg = img07Left;
 		else if (timer % drawSpeed > 0)					 playerDrawImg = img10Left;
 		if (timer % drawSpeed == 0)count++;	// プレイヤーの動き毎にカウント
+
+		if (dush == false && timer % drawSpeed < (drawSpeed / 6) * 2)playerDrawImg = imgMissLeft;
+
 		if (count == 8)	// 【仮】8周すると昼と夜を切り替える
 		{
 			if (rhythm == 2)rhythm = 3, speed = 150,sun=false;
@@ -91,19 +98,29 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (timer % drawSpeed == ((drawSpeed / 6) * 1.5))PlaySoundMem(seMetronome, DX_PLAYTYPE_BACK);
 			if (timer % drawSpeed == ((drawSpeed / 6) * 3.5))PlaySoundMem(seMetronome, DX_PLAYTYPE_BACK);
 		}
-		run--;
+		if (run > 1000)run -= 2;	// プレイヤーが一定より前にいる場合後ろに引っ張り調整する
+		else if(run>-1000) run -= 1;
 
 		if (sun == false)SetDrawBright(100, 100, 100);
 		DrawImage(playerDrawImg, WIDTH / 2 - (500 - run) / 10, HEIGHT / 2, 8);	// 元の画像が小さいので8倍で出力
+		DrawImage(imgPharaoh, 100, HEIGHT / 2- (timer % drawSpeed)/2, 8);	// 元の画像が小さいので8倍で出力
 		SetDrawBright(255, 255, 255);
-		//DrawImage(imgRunningMachine, WIDTH / 2, (HEIGHT / 2) + 45, 8);
+	
 
-		if (timer % drawSpeed > (drawSpeed/6) * 5 && pushS == 1)run += drawSpeed*2;
-		//if (timer % drawSpeed < (drawSpeed/10) * 1 && pushS == 1)run += drawSpeed * 2;
+		// 正しいタイミングでSキーが押された瞬間に一回だけ進める
+		if (timer % drawSpeed > (drawSpeed/6) * 5 && pushS == 1&&dush==false)run += drawSpeed*2,dush=true;
 
+		// Sキーが押されていなかった場合に少し後退させる
+		if (timer % drawSpeed == 0 && dush == false)run -= drawSpeed * 3;
+
+		// 少し経った後に失敗モーションを終わらせる
+		if (timer % drawSpeed < (drawSpeed / 6) * 5&&timer % drawSpeed > (drawSpeed / 6) * 2 && dush == true)dush = false;
+	
+		// 正しくないタイミングでSキーが押された瞬間に少し後退させる
 		if (timer%drawSpeed<(drawSpeed/6)*5&&timer % drawSpeed > 0 && pushS == 1)run -= drawSpeed * 2;
 
 
+		// Sキーが押された瞬間かどうかを判定する
 		if(CheckHitKey(KEY_INPUT_S) == 0)
 		{
 			if (pushS > 0) pushS = -1;
@@ -131,10 +148,15 @@ void InitGame(void)
 	img10Left = LoadGraphWithCheck("image/run1.0Left.png");
 	img07Left = LoadGraphWithCheck("image/run0.7Left.png");
 	img04Left = LoadGraphWithCheck("image/run0.4Left.png");
+	imgR10Right = LoadGraphWithCheck("image/runR_1.0Right.png");
+	imgR07Right = LoadGraphWithCheck("image/runR_0.7Right.png");
+	imgR04Right = LoadGraphWithCheck("image/runR_0.4Right.png");
+	imgMissLeft = LoadGraphWithCheck("image/runMissLeft.png");
 	imgStop = LoadGraphWithCheck("image/runStop.png");
 
-	// ランニングマシンの画像読み込み
-	imgRunningMachine = LoadGraphWithCheck("image/RunningMachineRed.png");
+	// ファラオ（追いかけてくる敵）の画像読み込み
+	imgPharaoh = LoadGraphWithCheck("image/runPharaohNormal.png");
+	imgPharaohMiss = LoadGraphWithCheck("image/runPharaohMiss.png");
 
 	// 背景の画像読み込み
 	imgGround = LoadGraphWithCheck("image/runGround.png");
