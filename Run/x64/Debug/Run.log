@@ -1,2 +1,4 @@
 ﻿  Run.cpp
+D:\Onoe\repos\Run\Run.cpp(89,31): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(89,18): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
   Run.vcxproj -> D:\Onoe\repos\Run\x64\Debug\Run.exe

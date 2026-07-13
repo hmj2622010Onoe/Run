@@ -28,10 +28,11 @@
               "RelativeDocumentMoniker": "Run.h",
               "ToolTip": "D:\\Onoe\\repos\\Run\\Run.h",
               "RelativeToolTip": "Run.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-01T03:20:37.764Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -39,9 +40,9 @@
               "Title": "Run.cpp",
               "DocumentMoniker": "D:\\Onoe\\repos\\Run\\Run.cpp",
               "RelativeDocumentMoniker": "Run.cpp",
-              "ToolTip": "D:\\Onoe\\repos\\Run\\Run.cpp",
-              "RelativeToolTip": "Run.cpp",
-              "ViewState": "AgIAAJcAAAAAAAAAAAAqwKwAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\Onoe\\repos\\Run\\Run.cpp*",
+              "RelativeToolTip": "Run.cpp*",
+              "ViewState": "AgIAAKsAAAAAAAAAAAAAAMMAAABSAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-07-01T01:30:18.884Z",
               "EditorCaption": ""
