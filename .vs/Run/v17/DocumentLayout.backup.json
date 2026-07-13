@@ -31,8 +31,7 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-01T03:20:37.764Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
@@ -42,7 +41,7 @@
               "RelativeDocumentMoniker": "Run.cpp",
               "ToolTip": "D:\\Onoe\\repos\\Run\\Run.cpp*",
               "RelativeToolTip": "Run.cpp*",
-              "ViewState": "AgIAAKsAAAAAAAAAAAAAAMMAAABSAAAAAAAAAA==",
+              "ViewState": "AgIAALEAAAAAAAAAAAAqwLsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-07-01T01:30:18.884Z",
               "EditorCaption": ""
