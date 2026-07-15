@@ -1,16 +1,22 @@
 ﻿  Run.cpp
-D:\Onoe\repos\Run\Run.cpp(95,31): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(95,18): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(248,64): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(249,22): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(254,111): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(255,69): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(324,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(324,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(325,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(325,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(337,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(337,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(338,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
-D:\Onoe\repos\Run\Run.cpp(338,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(94,31): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(94,18): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(241,64): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(242,22): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(247,111): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(248,69): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(318,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(318,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(319,31): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(319,18): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(320,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(320,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(321,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(321,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(334,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(334,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(335,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(335,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(336,34): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
+D:\Onoe\repos\Run\Run.cpp(336,19): warning C4244: '引数': 'double' から 'int' への変換です。データが失われる可能性があります。
   Run.vcxproj -> D:\Onoe\repos\Run\x64\Debug\Run.exe

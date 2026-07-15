@@ -4,7 +4,6 @@
 // 定数の定義
 const int WIDTH = 1200, HEIGHT = 720;	// ウィンドウの幅と高さのピクセル数
 const int FPS = 60;
-const int DISTANCE_MAX = 5000;	// 耐えるとクリアとなるまでの時間　ゲーム内表記は5000m
 enum { NOON, EVENING, NIGHT, MORNING };	// 時間帯
 enum { TITLE, PLAY, OVER, CLEAR };
 
@@ -20,7 +19,7 @@ int imgClouds;	// 背景(昼)
 int imgGroundN, imgSandN, imgPyramidN,imgStarN;	// 背景(夜)
 int imgEveningSky,imgEveSun;	// 背景(夕)
 
-int seMetronome, seTempo, seClick,seCharge,seBeam,seMiss,seSliding,seBeamMiss,seEgypt1,seEgypt2,seEgypt3,seIndia1,seEthnic1,seStart,seHeli;	// 使用する効果音
+int seMetronome, seTempo, seClick,seCharge,seBeam,seMiss,seSliding,seBeamMiss,seEgypt1,seEgypt2,seEgypt3,seIndia1,seEthnic1,seStart,seHeli,seOver;	// 使用する効果音
 //int bgmNoon, bgmEvening, bgmNight, bgmMorning;	// BGM
 
 // 画像代入用
@@ -196,10 +195,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 				if (pharaohCount == 2)	pharaoh = imgPharaohMBlack, pharaohX = 80;
 				if (pharaohCount == 1)	pharaoh = imgPharaohMWhite, pharaohX = 60;
 				if (pharaohCount == 0)	pharaoh = imgPharaohMRed, pharaohX = 40;
-				if (pharaohCount == -1)	{pharaoh = imgPharaohMiss, pharaohX = 100;
-					pharaohCount = 7;
-					if(timeZone==MORNING)pharaohCount = 5;
-				}
+				if (pharaohCount == -1)	pharaoh = imgPharaohMiss, pharaohX = 100,pharaohCount = 7;
 			}
 			else
 			{
@@ -207,10 +203,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 				if (pharaohCount == 2)	pharaoh = imgPharaohBlack, pharaohX = 80;
 				if (pharaohCount == 1)	pharaoh = imgPharaohWhite, pharaohX = 60;
 				if (pharaohCount == 0)	pharaoh = imgPharaohRed, pharaohX = 40;
-				if (pharaohCount == -1){pharaoh = imgPharaoh, pharaohX = 100;
-					pharaohCount = 7;
-					if (timeZone == MORNING)pharaohCount = 5;
-				}
+				if (pharaohCount == -1)	pharaoh = imgPharaoh, pharaohX = 100,pharaohCount = 7;
 			}
 
 			if (pharaohCount > 3) {
@@ -284,8 +277,8 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (playerDrawImg == img2Sliding)run += 3;
 
 			
-			DrawText(50, 20, "Score:%d", score, 0xff1010, 50);	// スコアテキスト
-			DrawText(50, 20, "助けの到着まで:%d", helicopter, 0xff1010, 50);	// ゴールまでテキスト
+			DrawText(50, 20, "助けの到着まで:%d", helicopter, 0xff1010, 40);	// ゴールまでテキスト
+			DrawText(50, 80, "Score:%d", score, 0xffff10, 40);	// スコアテキスト
 			
 
 			// Sキーが押された瞬間かどうかを判定する
@@ -313,6 +306,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (run < -3500)
 			{
 				scene = OVER;
+				PlaySoundMem(seOver, DX_PLAYTYPE_BACK);
 				break;
 			}
 		break;
@@ -321,11 +315,14 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			SetDrawBright(255, 255, 255);
 			SetBackgroundColor(0, 0, 0);	// 背景色の指定
 			DrawImageEnlarge(imgBadEnd, WIDTH/2, HEIGHT / 2, 20, 20);
-			DrawText(WIDTH * 0.12, HEIGHT * 0.7, "Press R key to restart", true, 0xffffff, 80);
+			DrawText(WIDTH * 0.12, HEIGHT * 0.8, "Press R key to restart", true, 0xffffff, 80);
+			DrawText(WIDTH*0.24, HEIGHT*0.3, "助けまであと%dカウントでした", helicopter, 0xff1010, 40);
+			DrawText(WIDTH * 0.38, HEIGHT * 0.6, "%d",score, 0xffffff, 120);
 			DrawText(WIDTH * 0.02, HEIGHT * 0.1, "ミイラにされてしまった…", true, 0xffffff, 95);
 			if (CheckHitKey(KEY_INPUT_R))
 			{
 				InitVariable();
+				PlaySoundMem(seStart, DX_PLAYTYPE_BACK);
 				scene = PLAY;
 			}
 			break;
@@ -334,11 +331,13 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			SetDrawBright(255, 255, 255);
 			SetBackgroundColor(100, 180, 255);	// 背景色の指定
 			DrawImageEnlarge(imgGoodEnd, WIDTH / 2, HEIGHT / 2, 10, 10);
-			DrawText(WIDTH * 0.12, HEIGHT * 0.7, "Press R key to restart", true, 0xffff00, 80);
+			DrawText(WIDTH * 0.12, HEIGHT * 0.8, "Press R key to restart", true, 0xffff00, 80);
+			DrawText(WIDTH * 0.38, HEIGHT * 0.6, "%d", score, 0xffffff, 120);
 			DrawText(WIDTH * 0.02, HEIGHT * 0.1, "無事に逃げ切れたようだ…", true, 0xffff00, 95);
 			if (CheckHitKey(KEY_INPUT_R))
 			{
 				InitVariable();
+				PlaySoundMem(seStart, DX_PLAYTYPE_BACK);
 				scene = PLAY;
 			}
 			break;
@@ -426,6 +425,7 @@ void InitGame(void)
 	seEgypt3 = LoadSoundMemWithCheck("sound/AS_エジプト音階3.wav");
 	seStart = LoadSoundMemWithCheck("sound/AS_Start.wav");
 	seHeli = LoadSoundMemWithCheck("sound/AS_ヘリコプター.wav");
+	seOver = LoadSoundMemWithCheck("sound/AS_吸い込まれ.wav");
 
 	//ChangeVolumeSoundMem(64, seMetronome);
 	//ChangeVolumeSoundMem(64, seTempo);
@@ -456,6 +456,9 @@ void InitVariable(void)
 	zoneChangeSpan = 32;
 	timeZone = NOON;	// 時間帯
 	gem = earlyGem;
+	score = 0;
+	helicopter = zoneChangeSpan * 4;
+
 	
 	dush = true;	//  前回ミスしていないかどうかを判定する
 	pharaohMiss = false;	// ファラオがミス状態になっているか
