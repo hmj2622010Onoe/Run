@@ -9,16 +9,18 @@ enum { NOON, EVENING, NIGHT, MORNING };	// 時間帯
 enum { TITLE, PLAY, OVER, CLEAR };
 
 // グローバル変数
-int img10Right,img07Right,img04Right, img10Left,img07Left,img04Left,imgMissLeft,imgR10Right,imgR07Right,imgR04Right,imgStop,img10Segway,img05Segway;	// プレイヤーの画像
+int img10Right,img07Right,img04Right, img10Left,img07Left,img04Left,imgMissLeft,imgG10Right,imgY07Right,imgR04Right,imgStop,img10Segway,img05Segway;	// プレイヤーの画像
 int img0Sliding, img1Sliding, img2Sliding, img3Sliding;	// プレイヤーのスライディングアニメーション
 
 int imgPharaoh, imgPharaohMiss,imgPharaohBlack,imgPharaohMBlack,imgPharaohWhite,imgPharaohMWhite,imgPharaohRed,imgPharaohMRed,imgBeam;	// ファラオ(追いかけてくる敵)の画像
+int imgGoodEnd, imgBadEnd;
 
 int imgGround, imgSand, imgPyramid,imgSun,imgMoon;	// 背景の画像
+int imgClouds;	// 背景(昼)
 int imgGroundN, imgSandN, imgPyramidN,imgStarN;	// 背景(夜)
 int imgEveningSky,imgEveSun;	// 背景(夕)
 
-int seMetronome, seTempo, seClick,seCharge,seBeam,seMiss,seSliding,seBeamMiss;	// 使用する効果音
+int seMetronome, seTempo, seClick,seCharge,seBeam,seMiss,seSliding,seBeamMiss,seEgypt1,seEgypt2,seEgypt3,seIndia1,seEthnic1,seStart,seHeli;	// 使用する効果音
 //int bgmNoon, bgmEvening, bgmNight, bgmMorning;	// BGM
 
 // 画像代入用
@@ -43,10 +45,13 @@ int timer = 0;
 int rhythm = 2;	// drawSpeedごとに音が鳴る頻度
 int run = 1500;	// プレイヤーの位置を決める値
 int count = 0;	// プレイヤーのアニメーションが何周したかをカウントし時間帯を切り替える
-int distance = 0;	// クリアまでの距離を表す
 int pharaohCount = 7;	// ファラオがビームを放つ間隔
 int pharaohX = 100;	// ファラオのX座標
 int zoneChangeSpan = 32;	// ゾーンが切り替わるスパン
+int gem = 0;	// 宝石の数
+int earlyGem = 0;	// ゲーム開始時に所持している宝石
+int score = 0;
+int helicopter = zoneChangeSpan * 4;
 
 int timeZone = NOON;	// 時間帯
 int scene = TITLE;
@@ -67,6 +72,7 @@ bool seFlag3_2 = true;
 bool seFlag4_1 = true;
 bool seFlag4_2 = true;
 bool slidingMissSeFlag = true;
+bool heliSeFlag = true;
 
 
 int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
@@ -91,6 +97,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (CheckHitKey(KEY_INPUT_S))
 			{
 				InitVariable();
+				PlaySoundMem(seStart, DX_PLAYTYPE_BACK);
 				scene = PLAY;
 			}
 			break;
@@ -102,8 +109,8 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			drawSpeed = 200 - speed;	// 200からスピード値を引いた時間で画像が一周する
 			if (sliding == false) {
 				if (timer % drawSpeed > (drawSpeed / 6) * 5)playerDrawImg = imgR04Right;
-				else if (timer % drawSpeed > (drawSpeed / 6) * 4)playerDrawImg = imgR07Right;
-				else if (timer % drawSpeed > (drawSpeed / 6) * 3)playerDrawImg = imgR10Right;
+				else if (timer % drawSpeed > (drawSpeed / 6) * 4)playerDrawImg = imgY07Right;
+				else if (timer % drawSpeed > (drawSpeed / 6) * 3)playerDrawImg = imgG10Right;
 				else if (timer % drawSpeed > (drawSpeed / 6) * 2)playerDrawImg = img04Left;
 				else if (timer % drawSpeed > (drawSpeed / 6) * 1)playerDrawImg = img07Left;
 				else if (timer % drawSpeed > 0)					 playerDrawImg = img10Left;
@@ -125,6 +132,9 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (timer % drawSpeed == 0)
 			{
 				count++;	// プレイヤーの動き一周毎にカウント
+				helicopter--;
+
+				if (helicopter < 10 && heliSeFlag == true)heliSeFlag = false,PlaySoundMem(seHeli, DX_PLAYTYPE_BACK);;
 
 				seFlag1 = true, seFlag2 = true, seFlag3_1 = true, seFlag3_2 = true, seFlag4_1 = true, seFlag4_2 = true, slidingMissSeFlag = true;	// Seフラッグのリセット
 
@@ -136,27 +146,29 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 				else if (sliding == true && slidingCount == false)slidingCount = true;
 				else if (sliding == true && slidingCount == true)sliding = false, playerDrawImg = img04Right, slidingCushion = true;
 				pharaohCount--;
-				if (pharaohCount == 2 || pharaohCount == 1)	PlaySoundMem(seCharge, DX_PLAYTYPE_BACK);
+				//if (pharaohCount == 2 || pharaohCount == 1)	PlaySoundMem(seCharge, DX_PLAYTYPE_BACK);
 				if (pharaohCount == 0)	PlaySoundMem(seBeam, DX_PLAYTYPE_BACK);
 			}
 
 
 			if (dush == false && timer % drawSpeed < (drawSpeed / 6) * 2 && slidingCount == false)playerDrawImg = imgMissLeft;
 
-			if (count == zoneChangeSpan)	// 【仮】16周すると時間帯を切り替える
+			if (count == zoneChangeSpan)	// 16周すると時間帯を切り替える
 			{
 				timeZone++;
-				if (timeZone == 4)timeZone = 0;
+				//if (timeZone == 4)timeZone = 0;
 				count = 0;
-				if (timeZone == NOON)rhythm = 2, speed = 150,zoneChangeSpan/=2; //StopSoundMem(bgmMorning),PlaySoundMem(bgmNoon, DX_PLAYTYPE_LOOP);
-				if (timeZone == EVENING)rhythm = 3, speed = 130; //StopSoundMem(bgmNoon), PlaySoundMem(bgmEvening, DX_PLAYTYPE_LOOP);
+				if (timeZone == NOON)rhythm = 2, speed = 150; //StopSoundMem(bgmMorning),PlaySoundMem(bgmNoon, DX_PLAYTYPE_LOOP);
+				if (timeZone == EVENING)rhythm = 3, speed = 150; //StopSoundMem(bgmNoon), PlaySoundMem(bgmEvening, DX_PLAYTYPE_LOOP);
 				if (timeZone == NIGHT)rhythm = 3, speed = 160;//StopSoundMem(bgmEvening), PlaySoundMem(bgmNight, DX_PLAYTYPE_LOOP);
 				if (timeZone == MORNING)rhythm = 4, speed = 140; //StopSoundMem(bgmNight), PlaySoundMem(bgmMorning, DX_PLAYTYPE_LOOP);
-				if (timeZone == NOON && zoneChangeSpan < 2)scene=TITLE;
+				if (timeZone ==4)scene=CLEAR;
 			}
 
 			if (seFlag1 == true && timer % drawSpeed >= ((drawSpeed / 6) * 5.5)) {	// 定期的に音を鳴らす
-				if (sliding == true)PlaySoundMem(seMetronome, DX_PLAYTYPE_BACK);
+				if (sliding == true)PlaySoundMem(seTempo, DX_PLAYTYPE_BACK);
+				else if (count%8==4)PlaySoundMem(seIndia1, DX_PLAYTYPE_BACK);
+				else if (count%8==5)PlaySoundMem(seEthnic1, DX_PLAYTYPE_BACK);
 				else PlaySoundMem(seTempo, DX_PLAYTYPE_BACK);
 				seFlag1 = false;
 			}
@@ -177,7 +189,6 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			DrawImageEnlarge(playerDrawImg, WIDTH / 2 - (500 - run) / 10, HEIGHT / 2, 8, 8);	// 元の画像が小さいので8倍で出力
 
 			// ファラオ　プレイヤーのアニメーション一周ごとに切り替わるboolで上下させる
-			SetDrawBright(255, 255, 255);
 
 			if (pharaohMiss == true)
 			{
@@ -185,7 +196,10 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 				if (pharaohCount == 2)	pharaoh = imgPharaohMBlack, pharaohX = 80;
 				if (pharaohCount == 1)	pharaoh = imgPharaohMWhite, pharaohX = 60;
 				if (pharaohCount == 0)	pharaoh = imgPharaohMRed, pharaohX = 40;
-				if (pharaohCount == -1)	pharaoh = imgPharaohMiss, pharaohX = 100, pharaohCount = 7;
+				if (pharaohCount == -1)	{pharaoh = imgPharaohMiss, pharaohX = 100;
+					pharaohCount = 7;
+					if(timeZone==MORNING)pharaohCount = 5;
+				}
 			}
 			else
 			{
@@ -193,7 +207,10 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 				if (pharaohCount == 2)	pharaoh = imgPharaohBlack, pharaohX = 80;
 				if (pharaohCount == 1)	pharaoh = imgPharaohWhite, pharaohX = 60;
 				if (pharaohCount == 0)	pharaoh = imgPharaohRed, pharaohX = 40;
-				if (pharaohCount == -1)	pharaoh = imgPharaoh, pharaohX = 100, pharaohCount = 7;
+				if (pharaohCount == -1){pharaoh = imgPharaoh, pharaohX = 100;
+					pharaohCount = 7;
+					if (timeZone == MORNING)pharaohCount = 5;
+				}
 			}
 
 			if (pharaohCount > 3) {
@@ -206,6 +223,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 					if (pharaohCount == 0) {
 						int w, h;
 						GetGraphSize(imgBeam, &w, &h);
+						SetDrawBright(255, 255, 255);
 						DrawImageEnlarge(imgBeam, pharaohX, HEIGHT / 2 + 20, 20, 8);	// ビーム発射
 						//DrawExtendGraph(pharaohX - (w / 2) * 20, HEIGHT/2+20 - (h / 2) * 8, pharaohX + (w / 2) * 20, HEIGHT/2+20 + (h / 2) * 8, imgBeam, true);
 					}
@@ -215,19 +233,27 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 					if (pharaohCount == 0) {
 						int w, h;
 						GetGraphSize(imgBeam, &w, &h);
+						SetDrawBright(255, 255, 255);
 						DrawImageEnlarge(imgBeam, pharaohX, HEIGHT / 2, 20, 8);
 						//DrawExtendGraph(pharaohX - (w / 2) * 20, HEIGHT / 2 - (h / 2) * 8, pharaohX + (w / 2) * 20, HEIGHT / 2 + (h / 2) * 8, imgBeam, true);
 					}
 				}
 			}
 
+			SetDrawBright(255, 255, 255);
 
 			// 正しいタイミングでSキーが押された瞬間に一回だけ進める
-			if (timer % drawSpeed > (drawSpeed / 6) * 5 && pushS == 1 && dush == false)run += drawSpeed * 2, dush = true, pharaohMiss = false;
+			if (timer % drawSpeed > (drawSpeed / 6) * 5 && pushS == 1 && dush == false) {
+				run += drawSpeed * 2, dush = true, pharaohMiss = false;
+				if (timer % drawSpeed >= (drawSpeed / 6) * 5.5)score += 20 - (timer % drawSpeed - (drawSpeed / 6) * 5.5);
+				else score += 20 - ((drawSpeed / 6) * 5.5-timer % drawSpeed);
+			}
 			// 正しいタイミングでDキーが押された瞬間にスライディングを行う
-			if (pharaohCount == 1 && timer % drawSpeed > (drawSpeed / 6) * 5 && pushD == 1 && dush == false)sliding = true, dush = true, pharaohMiss = false, PlaySoundMem(seSliding, DX_PLAYTYPE_BACK);
-
-
+			if (pharaohCount == 1 && timer % drawSpeed > (drawSpeed / 6) * 5 && pushD == 1 && dush == false) {
+				sliding = true, dush = true, pharaohMiss = false,PlaySoundMem(seSliding, DX_PLAYTYPE_BACK);
+				if (timer % drawSpeed >= (drawSpeed / 6) * 5.5)score += (20 - (timer % drawSpeed - (drawSpeed / 6) * 5.5))*3;
+				else score += (20 - ((drawSpeed / 6) * 5.5 - timer % drawSpeed))*3;
+			}
 			//if (timer % drawSpeed > (drawSpeed / 6) * 5 && pushD==-1&& slidingCount == true)slidingCount=false, run += drawSpeed * 2,dush = true, pharaoh = imgPharaoh;
 
 			// Sキーが押されていなかった場合に少し後退させる
@@ -250,16 +276,17 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			if (timer % drawSpeed < (drawSpeed / 6) * 5 && timer % drawSpeed > 0 && pushS == 1)run -= drawSpeed * 2, pharaohMiss = true, PlaySoundMem(seMiss, DX_PLAYTYPE_BACK);
 			if (timer % drawSpeed < (drawSpeed / 6) * 5 && timer % drawSpeed > 0 && pushD == 1 && pharaohCount > 0)run -= drawSpeed * 2, pharaohMiss = true, PlaySoundMem(seMiss, DX_PLAYTYPE_BACK);
 
-			if (pharaoh == imgPharaohMiss)run -= 5;	// プレイヤーがミスを行った場合成功するまで後ろに引っ張る
+			if (pharaohMiss == true)run -= 5+gem;	// プレイヤーがミスを行った場合成功するまで後ろに引っ張る
 			else if (run > 1000)run -= 2;	// プレイヤーが一定より前にいる場合後ろに引っ張り調整する
 			else if (run > -1000) run -= 1;
 
 			if (playerDrawImg == img1Sliding)run += 5;
 			if (playerDrawImg == img2Sliding)run += 3;
 
-			if (distance > 0)distance--;	// 残り距離を縮める
-			if (distance > 500)DrawText(WIDTH / 2 - 150, HEIGHT - 200, "Finish:%dm", distance, 0xff1010, 50);	// ゴールまでを表すテキスト　ゴールに近づけば非表示になる
-			if (distance < 0)distance = 0;
+			
+			DrawText(50, 20, "Score:%d", score, 0xff1010, 50);	// スコアテキスト
+			DrawText(50, 20, "助けの到着まで:%d", helicopter, 0xff1010, 50);	// ゴールまでテキスト
+			
 
 			// Sキーが押された瞬間かどうかを判定する
 			if (CheckHitKey(KEY_INPUT_S) == 0)
@@ -285,10 +312,36 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 			if (run < -3500)
 			{
-				scene = TITLE;
+				scene = OVER;
 				break;
 			}
 		break;
+
+		case OVER:
+			SetDrawBright(255, 255, 255);
+			SetBackgroundColor(0, 0, 0);	// 背景色の指定
+			DrawImageEnlarge(imgBadEnd, WIDTH/2, HEIGHT / 2, 20, 20);
+			DrawText(WIDTH * 0.12, HEIGHT * 0.7, "Press R key to restart", true, 0xffffff, 80);
+			DrawText(WIDTH * 0.02, HEIGHT * 0.1, "ミイラにされてしまった…", true, 0xffffff, 95);
+			if (CheckHitKey(KEY_INPUT_R))
+			{
+				InitVariable();
+				scene = PLAY;
+			}
+			break;
+
+		case CLEAR:
+			SetDrawBright(255, 255, 255);
+			SetBackgroundColor(100, 180, 255);	// 背景色の指定
+			DrawImageEnlarge(imgGoodEnd, WIDTH / 2, HEIGHT / 2, 10, 10);
+			DrawText(WIDTH * 0.12, HEIGHT * 0.7, "Press R key to restart", true, 0xffff00, 80);
+			DrawText(WIDTH * 0.02, HEIGHT * 0.1, "無事に逃げ切れたようだ…", true, 0xffff00, 95);
+			if (CheckHitKey(KEY_INPUT_R))
+			{
+				InitVariable();
+				scene = PLAY;
+			}
+			break;
 		}
 
 		ScreenFlip();	// 裏画面の内容を表画面に反映させる
@@ -303,7 +356,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 void InitGame(void)
 {	
 
-	distance = DISTANCE_MAX;
+	
 	// プレイヤーの画像読み込み
 	img10Right = LoadGraphWithCheck("image/run1.0Right.png");
 	img07Right = LoadGraphWithCheck("image/run0.7Right.png");
@@ -311,8 +364,8 @@ void InitGame(void)
 	img10Left = LoadGraphWithCheck("image/run1.0Left.png");
 	img07Left = LoadGraphWithCheck("image/run0.7Left.png");
 	img04Left = LoadGraphWithCheck("image/run0.4Left.png");
-	imgR10Right = LoadGraphWithCheck("image/runR_1.0Right.png");
-	imgR07Right = LoadGraphWithCheck("image/runR_0.7Right.png");
+	imgG10Right = LoadGraphWithCheck("image/runG_1.0Right.png");
+	imgY07Right = LoadGraphWithCheck("image/runY_0.7Right.png");
 	imgR04Right = LoadGraphWithCheck("image/runR_0.4Right.png");
 	imgMissLeft = LoadGraphWithCheck("image/runMissLeft.png");
 	imgStop = LoadGraphWithCheck("image/runStop.png");
@@ -332,12 +385,20 @@ void InitGame(void)
 	imgPharaohMWhite = LoadGraphWithCheck("image/runPharaohWhiteMiss.png");
 	imgPharaohMRed = LoadGraphWithCheck("image/runPharaohRedMiss.png");
 
+	// エンディングの画像読み込み
+	imgGoodEnd= LoadGraphWithCheck("image/runHelicopter.png");
+	imgBadEnd= LoadGraphWithCheck("image/runBadEnd.png");
+
+
 	// 背景の画像読み込み
 	imgGround = LoadGraphWithCheck("image/runGround.png");
 	imgSand = LoadGraphWithCheck("image/runSand.png");
 	imgPyramid = LoadGraphWithCheck("image/runPyramid.png");
 	imgSun = LoadGraphWithCheck("image/runSun.png");
 	imgMoon = LoadGraphWithCheck("image/runMoon.png");
+
+	// 昼
+	imgClouds = LoadGraphWithCheck("image/runClouds.png");
 
 	// 夜
 	imgGroundN = LoadGraphWithCheck("image/runGroundNight.png");
@@ -358,6 +419,13 @@ void InitGame(void)
 	seMiss = LoadSoundMemWithCheck("sound/AS_ポヨン.wav");
 	seSliding = LoadSoundMemWithCheck("sound/AS_シュー.wav");
 	seBeamMiss = LoadSoundMemWithCheck("sound/AS_BeamMiss.wav");
+	seIndia1 = LoadSoundMemWithCheck("sound/AS_インド.wav");
+	seEthnic1 = LoadSoundMemWithCheck("sound/AS_エスニック.mp3");
+	seEgypt1 = LoadSoundMemWithCheck("sound/AS_エジプト音階1.wav");
+	seEgypt2 = LoadSoundMemWithCheck("sound/AS_エジプト音階2.wav");
+	seEgypt3 = LoadSoundMemWithCheck("sound/AS_エジプト音階3.wav");
+	seStart = LoadSoundMemWithCheck("sound/AS_Start.wav");
+	seHeli = LoadSoundMemWithCheck("sound/AS_ヘリコプター.wav");
 
 	//ChangeVolumeSoundMem(64, seMetronome);
 	//ChangeVolumeSoundMem(64, seTempo);
@@ -381,11 +449,13 @@ void InitVariable(void)
 	rhythm = 2;	// drawSpeedごとに音が鳴る頻度
 	run = 1500;	// プレイヤーの位置を決める値
 	count = 0;	// プレイヤーのアニメーションが何周したかをカウントし時間帯を切り替える
-	distance = 0;	// クリアまでの距離を表す
+	score = 0;
+
 	pharaohCount = 7;	// ファラオがビームを放つ間隔
 	pharaohX = 100;	// ファラオのX座標
 	zoneChangeSpan = 32;
 	timeZone = NOON;	// 時間帯
+	gem = earlyGem;
 	
 	dush = true;	//  前回ミスしていないかどうかを判定する
 	pharaohMiss = false;	// ファラオがミス状態になっているか
@@ -418,6 +488,7 @@ void BackGround(void)
 		celestialX = 600;
 		celestialY = 80;
 		celestialSiz = 5;
+		DrawImageEnlarge(imgClouds, WIDTH / 2, HEIGHT / 2, 8, 8);	// 雲
 		SetBackgroundColor(100, 200, 255);	// 背景色の指定
 	}
 
@@ -432,7 +503,7 @@ void BackGround(void)
 		celestialY = 420;
 		celestialSiz = 8;
 		DrawImageEnlarge(imgEveningSky, WIDTH / 2, HEIGHT / 2, 8, 8);	// 夕方の空
-		SetBackgroundColor(255, 100, 0);	// 背景色の指定
+		SetBackgroundColor(255, 150, 0);	// 背景色の指定
 	}
 
 	if (timeZone == NIGHT)
